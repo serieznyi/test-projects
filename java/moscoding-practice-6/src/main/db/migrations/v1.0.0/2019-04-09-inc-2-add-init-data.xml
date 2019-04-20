@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet author="serieznyi (generated)" id="1554842246658-1">
+        <insert tableName="BANK">
+            <column name="id">1</column>
+            <column name="name">Village Bank</column>
+        </insert>
+        <insert tableName="BANK">
+            <column name="name">City Bank</column>
+        </insert>
+        <insert tableName="BANK">
+            <column name="name">Odin Bank</column>
+        </insert>
+        <insert tableName="BANK">
+            <column name="name">Super Bank</column>
+        </insert>
+        <insert tableName="BANK">
+            <column name="name">Galileo Bank</column>
+        </insert>
+        <insert tableName="BANK">
+            <column name="name">Hell Bank</column>
+        </insert>
+    </changeSet>
+    <changeSet author="serieznyi (generated)" id="1554842246658-2">
+        <insert tableName="ACCOUNT_TYPE">
+            <column name="id">1</column>
+            <column name="name">DEBIT</column>
+            <column name="bank_id">1</column>
+        </insert>
+        <insert tableName="ACCOUNT_TYPE">
+            <column name="id">2</column>
+            <column name="name">CREDIT</column>
+            <column name="bank_id">1</column>
+        </insert>
+    </changeSet>
+    <changeSet author="serieznyi (generated)" id="1554842246658-3">
+        <insert tableName="CLIENT">
+            <column name="name">PETROV</column>
+            <column name="account_type_id">1</column>
+        </insert>
+        <insert tableName="CLIENT">
+            <column name="name">IVANOV</column>
+            <column name="account_type_id">2</column>
+        </insert>
+        <insert tableName="CLIENT">
+            <column name="name">SIDOROV</column>
+            <column name="account_type_id">1</column>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

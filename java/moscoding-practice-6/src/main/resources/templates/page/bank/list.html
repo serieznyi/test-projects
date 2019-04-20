@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html
+        th:replace="~{layout/main :: layout(~{::title}, ~{::section})}"
+        lang="en" xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <title th:text="#{bank.list.title}"></title>
+</head>
+<body>
+<section>
+    <table class="table">
+        <thead>
+        <tr>
+            <th th:text="#{bank.list.grid.name}"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="bank : ${page}">
+            <td>
+                <a th:href="@{/bank/update/{id}/(id=${bank.id})}" th:text="${bank.name}"></a>
+            </td>
+            <td>
+                <form th:action="@{/bank/delete/{id}/(id=${bank.id})}" method="post">
+                    <button type="submit" class="btn btn-danger btn-sm" th:text="#{form.button.delete}">Delete</button>
+                </form>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(page)}">
+            <td th:text="#{empty}" colspan="5"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a class="btn btn-primary" th:href="@{/bank/create}" th:text="#{form.button.add}"></a>
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li
+                th:class="${(page.getNumber() + 1)==pageNumber} ? 'page-item active' : 'page-item'"
+                class="page-item"
+                th:if="${page.totalPages > 1}"
+                th:each="pageNumber: ${#numbers.sequence(1, page.getTotalPages())}"
+            >
+                <a
+                   class="page-link"
+                   th:href="@{/bank/list(page=${pageNumber})}"
+                   href="#"
+                   th:text="${pageNumber}"
+                >
+                    1
+                </a>
+            </li>
+        </ul>
+    </nav>
+</section>
+</body>
+</html>

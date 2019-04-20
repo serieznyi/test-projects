@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html
+        th:replace="~{layout/main :: layout(~{::title}, ~{::section})}"
+        lang="en" xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <title th:text="#{client.list.title}"></title>
+</head>
+<body>
+<section>
+    <table class="table">
+        <thead>
+        <tr>
+            <th th:text="#{client.list.grid.name}"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="client : ${page}">
+            <td>
+                <a th:href="@{/client/update/{id}/(id=${client.id})}" th:text="${client.name}"></a>
+            </td>
+            <td>
+                <form th:action="@{/client/delete/{id}/(id=${client.id})}" method="post">
+                    <button type="submit" class="btn btn-danger btn-sm" th:text="#{form.button.delete}">Delete</button>
+                </form>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(page)}">
+            <td th:text="#{empty}" colspan="5"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a class="btn btn-primary" th:href="@{/client/create}" th:text="#{form.button.add}"></a>
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li
+                th:if="${page.totalPages > 1}"
+                th:class="${(page.getNumber() + 1)==pageNumber} ? 'page-item active' : 'page-item'"
+                class="page-item"
+                th:each="pageNumber: ${#numbers.sequence(1, page.getTotalPages())}"
+            >
+                <a
+                   class="page-link"
+                   th:href="@{/client/list(page=${pageNumber})}"
+                   href="#"
+                   th:text="${pageNumber}"
+                >1</a>
+            </li>
+        </ul>
+    </nav>
+</section>
+</body>
+</html>

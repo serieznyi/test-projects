@@ -1,0 +1,83 @@
+import java.time.LocalDateTime
+
+plugins {
+    id 'org.springframework.boot' version '2.1.4.RELEASE'
+    id 'java'
+    id "org.liquibase.gradle" version "2.0.1"
+}
+
+apply plugin: 'io.spring.dependency-management'
+
+group = 'com.moscoding'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+ext['junit-jupiter.version'] = '5.4.2'
+
+def currentTime = LocalDateTime.now().toString()
+
+liquibase {
+    activities {
+        general {
+            changeLogFile "src/main/db/migrations/changelog.xml"
+            url "jdbc:h2:file:/tmp/practice6_db;AUTO_SERVER=TRUE"
+            username "db_admin"
+            password "db_admin"
+            referenceUrl "jdbc:h2:file:/tmp/practice6_db;AUTO_SERVER=TRUE"
+            referenceUsername "db_admin"
+            referencePassword "db_admin"
+        }
+        generate {
+            changeLogFile "src/main/db/migrations/changelog.new.${currentTime}.xml"
+            url "jdbc:h2:file:/tmp/practice6_db;AUTO_SERVER=TRUE"
+            username "db_admin"
+            password "db_admin"
+            referenceUrl "jdbc:h2:file:/tmp/practice6_db;AUTO_SERVER=TRUE"
+            referenceUsername "db_admin"
+            referencePassword "db_admin"
+        }
+    }
+    runList = project.hasProperty('runList') ? project.property('runList') : 'general'
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.modelmapper:modelmapper:2.3.2'
+    implementation 'javax.interceptor:javax.interceptor-api:1.2.2'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.session:spring-session-core'
+    liquibaseRuntime 'org.liquibase:liquibase-core:3.5.5'
+    liquibaseRuntime 'org.liquibase:liquibase-groovy-dsl:2.0.1'
+    liquibaseRuntime 'com.h2database:h2'
+    compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'org.springframework.boot:spring-boot-devtools'
+    runtimeOnly 'com.h2database:h2'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params'
+    testImplementation 'org.junit.jupiter:junit-jupiter-engine'
+    testImplementation 'org.mockito:mockito-core:2.27.0'
+    testImplementation('org.mockito:mockito-junit-jupiter')
+}

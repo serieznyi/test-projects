@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html
+        th:replace="~{layout/main :: layout(~{::title}, ~{::section})}"
+        lang="en" xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:th="http://www.thymeleaf.org"
+>
+    <head>
+        <title th:text="#{bank.update.title}"></title>
+    </head>
+    <body>
+        <section>
+            <h1 th:text="#{bank.update.title} + ' ' + ${form.name}">Update</h1>
+            <form th:action="@{/bank/update/{id}/(id=${id})}" th:object="${form}" method="post">
+                <div class="form-group">
+                    <input type="text" th:field="*{name}" class="form-control" id="title" th:placeholder="#{bank.update.form.name}" />
+                    <ul class="text-danger" th:each="error: ${#fields.errors('name')}">
+                        <li th:each="message : ${error.split(',')}">
+                            <p class="error-message" th:text="${message}"></p>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-6 mt-5">
+                    <input type="submit" class="btn btn-primary" th:value="#{form.button.update}" value="Update">
+                </div>
+            </form>
+        </section>
+    </body>
+</html>

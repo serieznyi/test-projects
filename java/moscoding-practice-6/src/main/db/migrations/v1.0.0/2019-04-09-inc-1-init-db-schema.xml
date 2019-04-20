@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet author="serieznyi (generated)" id="1554793645776-1">
+        <createTable tableName="ACCOUNT_TYPE">
+            <column autoIncrement="true" name="ID" type="INT(10)">
+                <constraints primaryKey="true" primaryKeyName="ACCOUNT_TYPE_PK"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="BANK_ID" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="serieznyi (generated)" id="1554793645776-2">
+        <createTable tableName="BANK">
+            <column autoIncrement="true" name="ID" remarks="Identifier" type="INT(10)">
+                <constraints primaryKey="true" primaryKeyName="BANK_PK"/>
+            </column>
+            <column name="NAME" remarks="Name" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="serieznyi (generated)" id="1554793645776-3">
+        <createTable tableName="CLIENT">
+            <column autoIncrement="true" name="ID" type="INT(10)">
+                <constraints primaryKey="true" primaryKeyName="CLIENT_PK"/>
+            </column>
+            <column name="NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ACCOUNT_TYPE_ID" type="INT(10)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="serieznyi (generated)" id="1554793645776-4">
+        <createIndex indexName="ACCOUNT_TYPE_BANK_ID_FK_INDEX_C" tableName="ACCOUNT_TYPE">
+            <column name="BANK_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="serieznyi (generated)" id="1554793645776-5">
+        <createIndex indexName="ACCOUNT_TYPE_NAME_UINDEX" tableName="ACCOUNT_TYPE" unique="true">
+            <column name="NAME"/>
+            <column name="BANK_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="serieznyi (generated)" id="1554793645776-6">
+        <createIndex indexName="BANK_NAME_UINDEX" tableName="BANK" unique="true">
+            <column name="NAME"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="serieznyi (generated)" id="1554793645776-7">
+        <createIndex indexName="CLIENT_ACCOUNT_TYPE_ID_FK_INDEX_7" tableName="CLIENT">
+            <column name="ACCOUNT_TYPE_ID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="serieznyi (generated)" id="1554793645776-8">
+        <addForeignKeyConstraint baseColumnNames="BANK_ID" baseTableName="ACCOUNT_TYPE"
+                                 constraintName="ACCOUNT_TYPE_BANK_ID_FK" deferrable="false" initiallyDeferred="false"
+                                 onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="ID"
+                                 referencedTableName="BANK"/>
+    </changeSet>
+    <changeSet author="serieznyi (generated)" id="1554793645776-9">
+        <addForeignKeyConstraint baseColumnNames="ACCOUNT_TYPE_ID" baseTableName="CLIENT"
+                                 constraintName="CLIENT_ACCOUNT_TYPE_ID_FK" deferrable="false" initiallyDeferred="false"
+                                 onDelete="CASCADE" onUpdate="CASCADE" referencedColumnNames="ID"
+                                 referencedTableName="ACCOUNT_TYPE"/>
+    </changeSet>
+</databaseChangeLog>
