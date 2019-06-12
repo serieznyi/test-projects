@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html
+        th:replace="~{layout/main :: layout(~{::title}, ~{::body})}"
+        lang="en" xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:th="http://www.thymeleaf.org"
+>
+    <head>
+        <title th:text="${theme.title}"></title>
+    </head>
+    <body>
+        <h1 class="mb-1" th:text="${theme.title}"></h1>
+        <section id="theme_messages" class="theme-messages">
+            <div class="list-group">
+                <div href="#" class="list-group-item list-group-item-action active">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1" th:text="${theme.title}"></h5>
+                        <small th:text="${#temporals.format(theme.createdDate.get(), 'dd/MMM/yyyy HH:mm')}"></small>
+                    </div>
+                    <p class="mb-1" th:text="${theme.text}"></p>
+                    <small th:text="${theme.createdBy.get().username}"></small>
+                </div>
+                <div href="#" class="list-group-item list-group-item-action" th:each="message : ${page.content}">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1"></h5>
+                        <small th:text="${#temporals.format(message.createdDate.get(), 'dd/MMM/yyyy HH:mm')}"></small>
+                    </div>
+                    <p class="mb-1" th:text="${message.content}"></p>
+                    <small th:text="${message.createdBy.get().username}"></small>
+                    <div class="message-delete-block">
+                        <form
+                            th:action="@{/message/delete/{id}(id=${message.id})}"
+                            method="post"
+                            th:if="${#authorization.expression('hasPermission(#vars.message, ''delete'') or isOwner(#vars.message)')}"
+                        >
+                            <button class="btn btn-sm btn-outline-danger" type="submit" th:title="#{form.button.delete}">
+                                <i class="far fa-trash-alt"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="theme_new_message">
+            <form action="#" th:action="@{/theme/{themeId}/message/create(themeId=${theme.id})}" id="create_message_form" th:object="${form}" method="post">
+
+                <div class="input-group mb-3">
+                    <textarea th:field="*{content}" class="form-control" id="text" th:placeholder="#{page.theme.view.message.form.text}" required></textarea>
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-primary" th:text="#{form.button.send}"></button>
+                    </div>
+                    <ul class="text-danger" th:each="error: ${#fields.errors('content')}">
+                        <li th:each="message : ${error.split(',')}">
+                            <p class="error-message" th:text="${message}"></p>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </section>
+        <section>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li
+                            th:if="${page.totalPages > 1}"
+                            th:class="${(page.getNumber() + 1)==pageNumber} ? 'page-item active' : 'page-item'"
+                            class="page-item"
+                            th:each="pageNumber: ${#numbers.sequence(1, page.getTotalPages())}"
+                    >
+                        <a
+                                class="page-link"
+                                th:href="@{/theme/{id}(page=${pageNumber}, id=${theme.id})}"
+                                href="#"
+                                th:text="${pageNumber}"
+                        >1</a>
+                    </li>
+                </ul>
+            </nav>
+        </section>
+    </body>
+</html>

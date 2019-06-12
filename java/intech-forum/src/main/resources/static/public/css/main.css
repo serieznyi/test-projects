@@ -1,0 +1,21 @@
+.container {
+    min-height: 800px;
+}
+
+.center_div{
+    margin: 0 auto;
+    width:80% /* value of your choice which suits your alignment */
+}
+
+#theme_messages .list-group-item {
+    border: none;
+}
+
+.message-delete-block {
+    float: right;
+    font-size: 12px;
+}
+
+#create_message_form {
+    margin-top: 10px;
+}

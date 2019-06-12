@@ -1,0 +1,68 @@
+import java.time.LocalDateTime
+
+plugins {
+    id 'org.springframework.boot' version '2.1.5.RELEASE'
+    id 'java'
+    id "org.liquibase.gradle" version "2.0.1"
+}
+
+apply plugin: 'io.spring.dependency-management'
+
+def appProps = new Properties()
+file("src/main/resources/application.properties").withInputStream {
+    stream -> appProps.load(stream)
+}
+
+def dbUrl = appProps.get("spring.datasource.url")
+def dbUser = appProps.get("spring.datasource.username")
+def dbPass = appProps.get("spring.datasource.password")
+
+group = 'org.intech.serieznyi'
+version = '0.0.1'
+sourceCompatibility = '1.8'
+
+liquibase {
+    activities {
+        general {
+            changeLogFile "src/main/db/migrations/changelog.xml"
+            url dbUrl
+            username dbUser
+            password dbPass
+            referenceUrl dbUrl
+            referenceUsername dbUser
+            referencePassword dbPass
+        }
+    }
+    runList = project.hasProperty('runList') ? project.property('runList') : 'general'
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
+    implementation 'org.modelmapper:modelmapper:2.3.2'
+    implementation 'org.liquibase:liquibase-core'
+    runtimeOnly 'org.postgresql:postgresql'
+    compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'org.springframework.boot:spring-boot-devtools'
+    liquibaseRuntime 'org.postgresql:postgresql'
+    liquibaseRuntime 'org.liquibase:liquibase-core:3.5.5'
+    liquibaseRuntime 'org.liquibase:liquibase-groovy-dsl:2.0.1'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+}

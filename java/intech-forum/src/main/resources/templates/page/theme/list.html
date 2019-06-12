@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html
+        th:replace="~{layout/main :: layout(~{::title}, ~{::section})}"
+        lang="en" xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:th="http://www.thymeleaf.org"
+>
+    <head>
+        <title th:text="#{page.theme_list.title}"></title>
+    </head>
+    <body>
+        <section>
+            <a class="btn btn-primary" th:href="@{/theme/create}" th:text="#{page.theme_list.create_button}"></a>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th th:text="#{page.theme_list.header.title}"></th>
+                        <th th:text="#{page.theme_list.header.creator}"></th>
+                        <th th:text="#{page.theme_list.header.created_at}"></th>
+                        <th th:text="#{page.theme_list.header.activity_date}"></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="theme : ${page.content}">
+                        <td>
+                            <a th:href="@{/theme/{id}/(id=${theme.id})}" th:text="${theme.title}"></a>
+                        </td>
+                        <td th:text="${theme.createdBy.get().username}">author</td>
+                        <td th:text="${#temporals.format(theme.createdDate.get(), 'dd/MMM/yyyy HH:mm')}">created_date</td>
+                        <td th:text="${#dates.format(theme.lastActivityDate, 'dd/MMM/yyyy HH:mm')}">activity_date</td>
+                        <td>
+                            <form th:action="@{/theme/delete/{id}/(id=${theme.id})}"
+                                  method="post"
+                                  th:if="${#authorization.expression('hasPermission(#vars.theme, ''delete'')')}"
+                            >
+                                <div class="btn-group-vertical btn-group-sm" role="group" aria-label="Basic example">
+                                    <button type="submit" class="btn btn-danger" th:title="#{form.button.delete}">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(page.content)}">
+                        <td th:text="#{empty}" colspan="5"></td>
+                    </tr>
+                </tbody>
+            </table>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li
+                            th:if="${page.totalPages > 1}"
+                            th:class="${(page.getNumber() + 1)==pageNumber} ? 'page-item active' : 'page-item'"
+                            class="page-item"
+                            th:each="pageNumber: ${#numbers.sequence(1, page.getTotalPages())}"
+                    >
+                        <a
+                                class="page-link"
+                                th:href="@{/(page=${pageNumber})}"
+                                href="#"
+                                th:text="${pageNumber}"
+                        >1</a>
+                    </li>
+                </ul>
+            </nav>
+        </section>
+    </body>
+</html>

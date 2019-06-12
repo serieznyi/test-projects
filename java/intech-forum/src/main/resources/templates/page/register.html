@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html
+        th:replace="~{layout/simple :: layout(~{::title}, ~{::section})}"
+        lang="en" xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:th="http://www.thymeleaf.org"
+>
+    <head>
+        <title th:text="#{page.register.title}"></title>
+    </head>
+    <body>
+        <section class="col-lg-6 center_div">
+            <h1 th:text="#{page.register.title}">Register</h1>
+            <form action="#" th:action="@{/register}" th:object="${form}" method="post">
+                <div class="form-group">
+                    <input type="text" th:field="*{username}" class="form-control" id="username" th:placeholder="#{form.register.username}">
+                    <ul class="text-danger">
+                        <li th:each="message: ${#fields.errors('username')}">
+                            <p class="error-message" th:text="${message}"></p>
+                        </li>
+                    </ul>
+                </div>
+                <div class="form-group">
+                    <input type="password" th:field="*{password}" class="form-control" id="password" th:placeholder="#{form.register.password}">
+                    <ul class="text-danger">
+                        <li th:each="message: ${#fields.errors('password')}">
+                            <p class="error-message" th:text="${message}"></p>
+                        </li>
+                    </ul>
+                </div>
+                <div class="form-group">
+                    <input type="password" th:field="*{confirmPassword}" class="form-control" id="confirm_password" th:placeholder="#{form.register.passwordConfirm}">
+                    <ul class="text-danger">
+                        <li th:each="message: ${#fields.errors('confirmPassword')}">
+                            <p class="error-message" th:text="${message}"></p>
+                        </li>
+                    </ul>
+                </div>
+                <div class="form-group">
+                    <select th:field="*{role}" class="form-control" id="role" th:placeholder="#{form.register.role}">
+                        <option
+                                th:each="roleItem : ${roleList}"
+                                th:text="${#messages.msg('enum.user.role.' + #strings.toLowerCase(roleItem))}"
+                                th:value="${roleItem}"
+                        >1</option>
+                    </select>
+                    <ul class="text-danger">
+                        <li th:each="message: ${#fields.errors('role')}">
+                            <p class="error-message" th:text="${message}"></p>
+                        </li>
+                    </ul>
+                </div>
+                <input type="submit" class="btn btn-primary btn-lg btn-block" th:value="#{form.register.submit}">
+                <a th:href="@{/login}" class="btn btn-secondary btn-lg btn-block" th:text="#{link.login}"></a>
+            </form>
+        </section>
+    </body>
+</html>

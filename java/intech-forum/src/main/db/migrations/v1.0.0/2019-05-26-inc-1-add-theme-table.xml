@@ -1,0 +1,28 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+    <changeSet author="serieznyi" id="1558902137504-1">
+        <createTable tableName="theme">
+            <column name="id" type="uuid">
+                <constraints primaryKey="true" primaryKeyName="theme_pk"/>
+            </column>
+            <column name="title" type="VARCHAR(50)"/>
+            <column name="text" type="TEXT"/>
+            <column name="created_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="last_modified_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="created_by_id" type="uuid"/>
+            <column name="last_modified_by_id" type="uuid"/>
+            <column name="last_activity_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="serieznyi" id="1558902137504-2">
+        <createIndex indexName="theme_title_uindex" tableName="theme" unique="true">
+            <column name="title"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="serieznyi" id="1558902137504-3">
+        <addForeignKeyConstraint baseColumnNames="created_by_id" baseTableName="theme" constraintName="theme_user_id_fk" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="SET NULL" referencedColumnNames="id" referencedTableName="user" validate="true"/>
+    </changeSet>
+    <changeSet author="serieznyi" id="1558902137504-4">
+        <addForeignKeyConstraint baseColumnNames="last_modified_by_id" baseTableName="theme" constraintName="theme_user_id_fk_2" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="SET NULL" referencedColumnNames="id" referencedTableName="user" validate="true"/>
+    </changeSet>
+</databaseChangeLog>

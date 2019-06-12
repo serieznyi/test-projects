@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="flash_message">
+    <div id="flash-messages">
+        <div
+                th:if="${flash_message_content}"
+                th:class="${'alert alert-' + flash_message_type}"
+                role="alert"
+        >
+            <span th:text="${flash_message_content}"></span>
+        </div>
+    </div>
+</div>
+</body>
+</html>
