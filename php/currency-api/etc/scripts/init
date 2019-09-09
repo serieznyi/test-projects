@@ -1,0 +1,146 @@
+#!/usr/bin/env python2.7
+# coding=utf-8
+
+from __future__ import print_function
+
+import argparse
+import logging
+import os
+import shutil
+import socket
+import subprocess
+import time
+
+from vendor.env import Environment
+from vendor.process import exec_command
+
+# Корень проекта
+root_dir = os.path.abspath(os.path.join(__file__, "../../.."))
+current_environment = None
+# Директория с исходниками для env файлов
+env_files_src_dir = root_dir + "/etc/env"
+# Путь к результирующему env файлу
+runtime_env_file = root_dir + "/.env"
+# Директория в которой хранятся docker-compose файлы
+docker_compose_files_dir = root_dir + "/etc/docker/compose"
+# Логирование
+FORMAT = '%(asctime)-15s %(levelname)s %(message)s'
+logging.basicConfig(format=FORMAT)
+logger = logging.getLogger('main')
+
+
+
+def get_real_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+    s.connect(("8.8.8.8", 80))
+
+    real_ip = s.getsockname()[0]
+
+    s.close()
+
+    return real_ip
+
+
+def copy_docker_compose_files():
+    data = Environment.read(runtime_env_file)
+
+    files_for_remove = [root_dir + '/docker-compose.yml', root_dir + '/docker-compose.override.yml']
+
+    for file_for_remove in files_for_remove:
+        if os.path.exists(file_for_remove):
+            os.remove(file_for_remove)
+            logger.debug("Удаляем файл файл: %s" % file_for_remove)
+
+    common_docker_compose_file = docker_compose_files_dir + '/docker-compose.yml'
+    logger.debug("Копирую общий docker-compose.yml файл: %s" % common_docker_compose_file)
+    shutil.copy(common_docker_compose_file, root_dir + '/docker-compose.yml')
+
+    override_docker_compose_file = docker_compose_files_dir + '/' + current_environment.lower() + ".yml"
+    logger.debug("Копирую docker-compose.override.yml файл: %s" % override_docker_compose_file)
+    shutil.copy(override_docker_compose_file, root_dir + '/docker-compose.override.yml')
+
+
+def remove_runtime_env_files():
+    for file in os.listdir(root_dir):
+        if file.startswith(".env"):
+            file = os.path.join(root_dir, file)
+            logger.debug("Удаляю файл " + file)
+            os.remove(file)
+
+
+def generate_runtime_env_file():
+    # Данные для результирующего env файла
+    result_env_data = {}
+
+    # Сохраняем данные из общего файла окружения
+    dist_env_file = os.path.join(env_files_src_dir, ".env.dist")
+    if not os.path.isfile(dist_env_file):
+        raise RuntimeError("Environment file " + dist_env_file + " not found")
+    result_env_data.update(Environment.read(dist_env_file))
+
+    # Сохраняем данные из файла окружения
+    dist_env_file = os.path.join(env_files_src_dir, '.env.' + options.env.lower())
+    if not os.path.isfile(dist_env_file):
+        raise RuntimeError("Environment file " + dist_env_file + " not found")
+    result_env_data.update(Environment.read(dist_env_file))
+
+
+    # Указываем IP
+    result_env_data['SERVER_REAL_IP'] = get_real_ip()
+
+    # Перезаписываем переменные из environ
+    env_vars_for_override = dict((key[5:], value) for key, value in os.environ.iteritems() if key.startswith("INIT_"))
+
+    for key, value in env_vars_for_override.items():
+        logger.info("Переменная окружения переопределена: %s=%s" % (key, value) )
+
+    result_env_data.update(env_vars_for_override)
+
+    file_handler = open(runtime_env_file, 'w')
+    for key, value in sorted(result_env_data.iteritems()):
+        print(key + "=" + value, file=file_handler)
+    file_handler.close()
+
+
+parser = argparse.ArgumentParser(
+    description='''
+        Инициализируем docker-compose и генерируем .env файл
+    ''',
+    formatter_class=argparse.RawTextHelpFormatter
+)
+
+parser.add_argument(
+    '--env',
+    default=Environment.LOCAL,
+    help="Окружение приложения (По умолчанию: " + Environment.LOCAL + ") "
+)
+
+parser.add_argument(
+    '--log-level',
+    default='debug',
+    help="Уровень логирования. По умолчанию info",
+    choices=['info', 'debug', 'warn']
+)
+
+options = parser.parse_args()
+
+log_level = options.log_level
+
+logger.setLevel(eval('logging.' + log_level.upper()))
+
+current_environment = options.env
+logger.info("Выбрано окружение: " + current_environment)
+
+print(root_dir)
+
+logger.info("Удаляю все runtime .env файлы")
+remove_runtime_env_files()
+
+logger.info("Генерирую файл ./.env")
+generate_runtime_env_file()
+
+logger.info("Копирую docker-compose файл")
+copy_docker_compose_files()
+
+

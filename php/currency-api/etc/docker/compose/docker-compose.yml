@@ -1,0 +1,45 @@
+# Базовая конфигурация
+
+version: '3'
+services:
+  nginx:
+    image: nginx:1.17.3-alpine
+    volumes:
+    - .:/var/www
+    - ./etc/docker/services/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    - ./etc/docker/services/nginx/conf.d/:/etc/nginx/conf.d/
+    environment:
+    - TZ=Europe/Moscow
+    working_dir: /var/www/
+    networks:
+      default:
+        aliases:
+          - currency_api_nginx
+  php:
+    image: serieznyi/currency-api-php:latest
+    volumes:
+    - .:/var/www
+    - ./etc/docker/services/php/php.ini:/usr/local/etc/php/php.ini:ro
+    - ./etc/docker/services/php/php-fpm.d/www.conf:/usr/local/etc/php-fpm.d/www.conf:ro
+    working_dir: /var/www/
+    cap_add:
+      - SYS_PTRACE
+    environment:
+      ICU_DATA: /opt/icu/
+    networks:
+      default:
+        aliases:
+        - currency_api_php
+  postgres:
+    image: postgres:11.5-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    command: "postgres -c config_file=/etc/postgres/postgresql.conf"
+    volumes:
+     - ./etc/docker/services/postgres/postgres.conf:/etc/postgres/postgresql.conf:ro
+    networks:
+      default:
+        aliases:
+        - currency_api_postgres

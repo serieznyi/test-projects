@@ -1,0 +1,24 @@
+# Окружения для локальной разработки
+
+version: '3'
+volumes:
+  postgres_local_db:
+services:
+  nginx:
+    depends_on:
+    - php
+    ports:
+    - "1280:80"
+  php:
+    volumes:
+    - ./etc/docker/services/php/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini:ro
+    - ./etc/docker/services/php/env/local.ini:/usr/local/etc/php/conf.d/php.ini:ro
+    networks:
+      default:
+        aliases:
+          - currency_api_php
+  postgres:
+    volumes:
+    - postgres_local_db:/var/lib/postgresql/data
+    ports:
+    - "1232:5432"

@@ -1,0 +1,22 @@
+create_dirs:
+  - var
+
+  - var/api/cache
+  - var/api/logs
+
+  - var/console
+  - var/console/cache
+  - var/console/logs
+
+set_executable:
+  - yii
+
+set_writable:
+  - var
+
+  - var/api/cache
+  - var/api/logs
+
+  - var/console
+  - var/console/cache
+  - var/console/logs
