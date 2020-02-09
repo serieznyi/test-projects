@@ -1,0 +1,60 @@
+{
+	"info": {
+		"_postman_id": "39be320c-0247-4288-98ca-d2cf624d3120",
+		"name": "Weldbook Test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get data",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\n\t\"currency\": \"RUB\",\n\t\"value\": 1.0\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8012/get_table_data?",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8012",
+					"path": [
+						"get_table_data"
+					],
+					"query": [
+						{
+							"key": "pipeline-MAIN_MATERIAL",
+							"value": "LTCS",
+							"disabled": true
+						},
+						{
+							"key": "id",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "characteristics-D_INCHES_MEMBER_1",
+							"value": "2",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

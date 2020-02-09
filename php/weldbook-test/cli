@@ -1,0 +1,30 @@
+#!/usr/bin/env php
+<?php
+
+use App\Infrastructure\Application;
+use App\Application\Cli\Command\Migrate\UpCommand;
+use App\Infrastructure\Cli\ExceptionHandler;
+use App\Infrastructure\Cli\ProcessorArgsParser;
+use App\Infrastructure\Cli\RouteParser;
+use App\Infrastructure\Cli\CliResponseRenderer;
+
+require_once __DIR__ . '/vendor/autoload.php';
+
+require_once __DIR__ . '/bootstrap.php';
+
+/** @var callable $exceptionHandler */
+$exceptionHandler = new ExceptionHandler;
+
+set_exception_handler([$exceptionHandler, 'handle']);
+
+$app = new Application(
+        require __DIR__ . '/dependencies.php',
+        RouteParser::class,
+        ProcessorArgsParser::class,
+        CliResponseRenderer::class
+);
+
+
+$app->addRoute('migrate/up', UpCommand::class);
+
+$app->run();
